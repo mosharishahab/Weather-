@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, CloudRain, CloudSnow, Sun, Wind, CloudLightning, CloudFog } from 'lucide-react';
+import { Sun, Cloud, CloudRain, CloudSnow, Wind, CloudLightning, CloudFog } from 'lucide-react';
 
 const App = () => {
-  const [currentWeather, setCurrentWeather] = useState({
-    city: '',
-    temp: 0,
-    condition: '',
-    highTemp: 0,
-    lowTemp: 0,
-    humidity: 0,
-    sunrise: '',
-    sunset: '',
-    time: '',
-    date: ''
-  });
-
+  const [currentWeather, setCurrentWeather] = useState(null);
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
   const [funnyQuote, setFunnyQuote] = useState('');
+  const [isDayTime, setIsDayTime] = useState(true);
 
   const funnyQuotes = {
     Clear: [
@@ -73,6 +62,10 @@ const App = () => {
   };
 
   useEffect(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    setIsDayTime(hour >= 6 && hour < 20); // 6 صبح تا 8 شب روشن
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async position => {
         const { latitude, longitude } = position.coords;
@@ -94,8 +87,8 @@ const App = () => {
               highTemp: Math.round(data.main.temp_max),
               lowTemp: Math.round(data.main.temp_min),
               humidity: data.main.humidity,
-              sunrise: sunrise,
-              sunset: sunset,
+              sunrise,
+              sunset,
               time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
               date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
             });
@@ -149,19 +142,22 @@ const App = () => {
     }
   }, []);
 
-  if (!currentWeather.city) {
+  if (!currentWeather) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white">
-        <p className="text-2xl mb-4 animate-pulse">در حال دریافت اطلاعات...</p>
+        <div className="animate-spin-slow mb-4">
+          <Sun size={80} className="text-yellow-400" />
+        </div>
+        <p className="text-2xl">دارم هوا رو برات چک می‌کنم...</p>
       </div>
     );
   }
 
   return (
-    <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
-
+    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'}`}>
+      
       {/* بالای صفحه */}
-      <div className="text-center mb-8 mt-4">
+      <div className="text-center mb-8 mt-4 animate-fade">
         <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
         <p className="text-xl opacity-90">{currentWeather.date}</p>
         <div className="flex items-center justify-center mt-4">
@@ -177,7 +173,7 @@ const App = () => {
       </div>
 
       {/* اطلاعات رطوبت، طلوع، غروب */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-4 animate-fade">
         <div className="bg-white bg-opacity-20 rounded-xl p-3">
           <p className="text-sm mb-1 opacity-80">رطوبت</p>
           <p className="text-lg">{currentWeather.humidity}%</p>
@@ -197,7 +193,7 @@ const App = () => {
       </div>
 
       {/* پیش‌بینی ساعتی */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4 animate-fade">
         <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
         <div className="flex overflow-x-auto pb-2">
           {hourlyForecast.map((hour, index) => (
@@ -213,7 +209,7 @@ const App = () => {
       </div>
 
       {/* پیش‌بینی ۵ روزه */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4 animate-fade">
         <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
         {dailyForecast.map((day, index) => (
           <div key={index} className="flex items-center justify-between py-3 border-b border-white border-opacity-20">
@@ -233,12 +229,12 @@ const App = () => {
       </div>
 
       {/* جمله خنده دار */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold animate-fade">
         {funnyQuote}
       </div>
 
       {/* کپی‌رایت */}
-      <div className="text-center text-white text-xs opacity-50 mb-6">
+      <div className="text-center text-white text-xs opacity-50 mb-6 animate-fade">
         <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
           © 2025 Shahab - با عشق ساختمش
         </a>
