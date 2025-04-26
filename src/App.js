@@ -21,22 +21,22 @@ const App = () => {
 
   const funnyQuotes = {
     Clear: [
-      "آفتاب پوخوندمون!",
-      "کرم ضدآفتاب یادت نره، سرخ نشی!",
-      "آفتاب درخشانه، مواظب سوختن باش!",
-      "هوا خوبه، وقت عشق و حاله!"
+      "آفتاب پدرسوخته اوف داره برنزه‌ می‌کنه!",
+      "کرم ضدآفتاب یادت نره، لبو نشی!",
+      "آفتاب درخشانه، مواظب پوستت باش!",
+      "هوا خوبه، ولی مواظب باش نسوزی!"
     ],
     Clouds: [
-      "ابرها دارن شایعه درست میکنن!",
-      "هوا ابریه، دلت باز باشه!",
-      "ابرها ناراحتن، ولی ما نه!",
-      "یه کم دیگه شاید بارون شد!"
+      "ابرها دارن شایعه پراکنی می‌کنن!",
+      "هوا ابریه، دل ابرها گرفته!",
+      "ابرها دپرس شدن، تو نشی!",
+      "یه کم دیگه میشه بارونی!"
     ],
-    "نیمه ابری مث هوای دلم": [
-      "خورشید قایم موشک بازی کرده!",
-      "یه کم آفتاب، یه کم ابر، یه دل نه صد دل عاشق!",
-      "نیمه ابری یعنی هوا دو دله!",
-      "ابرها و خورشید صلح کردن امروز!"
+    "نیمه ابری": [
+      "خورشید قایم‌موشک بازی میکنه!",
+      "یه ذره ابر، یه ذره آفتاب، همه چی قاطی پاتی!",
+      "نیمه ابری یعنی آسمون دو دله!",
+      "ابرها و خورشید داوش شدن امروز!"
     ]
   };
 
@@ -79,6 +79,7 @@ const App = () => {
 
         const locationRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
         const locationData = await locationRes.json();
+
         const cityName = locationData.address.city || locationData.address.town || locationData.address.village || 'شهر نامشخص';
 
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
@@ -160,87 +161,20 @@ const App = () => {
   return (
     <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
       
-      {/* بالای صفحه */}
-      <div className="text-center mb-8 mt-4">
-        <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
-        <p className="text-xl opacity-90">{currentWeather.date}</p>
-        <div className="flex items-center justify-center mt-4">
-          <span className="text-6xl font-thin">{currentWeather.temp}°</span>
-          <div className="mx-4">
-            {getWeatherIcon(currentWeather.condition, 48, true)}
-          </div>
-        </div>
-        <p className="text-xl mt-2">{currentWeather.condition}</p>
-        <p className="text-lg">
-          بیشترین: {currentWeather.highTemp}° | کمترین: {currentWeather.lowTemp}°
-        </p>
-      </div>
+      {/* محتوای هواشناسی و پیش‌بینی‌ها */}
 
-      {/* اطلاعات رطوبت، طلوع، غروب */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="bg-white bg-opacity-20 rounded-xl p-3">
-          <p className="text-sm mb-1 opacity-80">رطوبت</p>
-          <p className="text-lg">{currentWeather.humidity}%</p>
-        </div>
-        <div className="bg-white bg-opacity-20 rounded-xl p-3">
-          <p className="text-sm mb-1 opacity-80">طلوع خورشید</p>
-          <p className="text-lg">{currentWeather.sunrise}</p>
-        </div>
-        <div className="bg-white bg-opacity-20 rounded-xl p-3">
-          <p className="text-sm mb-1 opacity-80">غروب خورشید</p>
-          <p className="text-lg">{currentWeather.sunset}</p>
-        </div>
-        <div className="bg-white bg-opacity-20 rounded-xl p-3">
-          <p className="text-sm mb-1 opacity-80">ساعت فعلی</p>
-          <p className="text-lg">{currentWeather.time}</p>
-        </div>
-      </div>
-
-      {/* پیش‌بینی ساعتی */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
-        <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
-        <div className="flex overflow-x-auto pb-2">
-          {hourlyForecast.map((hour, index) => (
-            <div key={index} className="flex flex-col items-center mx-3 min-w-16">
-              <p className="mb-1">{hour.time}</p>
-              <div className="my-2">
-                {getWeatherIcon(hour.condition)}
-              </div>
-              <p>{hour.temp}°</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* پیش‌بینی ۵ روزه */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
-        <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
-        {dailyForecast.map((day, index) => (
-          <div key={index} className="flex items-center justify-between py-3 border-b border-white border-opacity-20">
-            <span className="w-24">{day.day}</span>
-            <div className="flex mx-2">
-              {getWeatherIcon(day.condition)}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm opacity-80 w-8 text-center">{day.lowTemp}°</span>
-              <div className="w-24 bg-white bg-opacity-30 h-1 rounded-full">
-                <div className="bg-white h-1 rounded-full" style={{ width: '60%' }}></div>
-              </div>
-              <span className="w-8 text-center">{day.highTemp}°</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* کادر نوشته خنده دار */}
+      {/* کادر جمله خنده دار */}
       <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
         {funnyQuote}
+      </div>
+
+      {/* کادر امضای پایینی */}
+      <div className="text-center text-white text-xs opacity-50 mb-4">
+        © 2025 Shahab - با عشق ساختمش
       </div>
 
     </div>
   );
 };
-<div className="text-center text-white text-xs opacity-50 mb-6">
-  © 2025 Shahab - با عشق ساختمش
-</div>
+
 export default App;
