@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [response, setResponse] = useState(null);
+  const [weather, setWeather] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -11,7 +11,16 @@ function App() {
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
           .then(data => {
-            setResponse(data);  // مستقیم داده دریافتی رو ذخیره کنیم
+            console.log(data); // برای دیباگ
+            if (data && data.cod && Number(data.cod) === 200) {
+              setWeather({
+                city: data.name,
+                temp: data.main.temp,
+                condition: data.weather[0].description,
+              });
+            } else {
+              setError('مشکل در دریافت اطلاعات آب و هوا');
+            }
           })
           .catch(err => {
             setError('مشکل در اتصال به سرور آب و هوا');
@@ -26,12 +35,13 @@ function App() {
   }, []);
 
   if (error) return <div>{error}</div>;
-  if (!response) return <div>در حال گرفتن اطلاعات...</div>;
+  if (!weather) return <div>در حال گرفتن اطلاعات...</div>;
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', direction: 'ltr' }}>
-      <h2>خروجی API:</h2>
-      <pre>{JSON.stringify(response, null, 2)}</pre>
+    <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
+      <h1>آب و هوای {weather.city}</h1>
+      <p>دمای فعلی: {weather.temp}° سانتی‌گراد</p>
+      <p>وضعیت آسمان: {weather.condition}</p>
     </div>
   );
 }
