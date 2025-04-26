@@ -147,7 +147,7 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white">
+      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white">
         <div className="animate-spin-slow mb-4">
           <Sun size={80} className="text-yellow-400" />
         </div>
