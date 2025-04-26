@@ -41,7 +41,7 @@ body {
 }
 
 .animated-sun {
-  animation: sunPulse 5s ease-in-out 1;
+  animation: sunPulse 10s ease-in-out 1;
 }
 
 @keyframes sunPulse {
