@@ -146,13 +146,15 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white">
-        <div className="animate-spin-slow mb-4">
-          <Sun size={80} className="text-yellow-400" />
-        </div>
-        <p className="text-2xl">دارم هوا رو برات چک می‌کنم...</p>
+  return (
+    <div className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white" style={{ minHeight: '100vh' }}>
+      <div className="animate-spin-slow mb-4">
+        <Sun size={80} className="text-yellow-400" />
       </div>
+      <p className="text-2xl">دارم هوا رو برات چک می‌کنم...</p>
+    </div>
+  );
+}
     );
   }  return (
     <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'} fade-in`}>
