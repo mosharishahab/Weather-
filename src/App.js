@@ -31,7 +31,7 @@ const App = () => {
   const getWeatherIcon = (condition, size = 48, isMain = false) => {
     const extraClass = isMain
       ? condition === 'Clear' || condition === 'آفتابی'
-        ? 'animated-sun'
+        ? 'animated-sun-main'
         : 'animated-cloud'
       : '';
     switch (condition) {
@@ -157,7 +157,7 @@ const App = () => {
         <p className="text-lg mt-2">%{currentWeather.humidity} رطوبت</p>
       </div>
 
-      {/* اطلاعات اضافی */}
+      {/* اطلاعات طلوع و غروب */}
       <div className="grid grid-cols-2 gap-4 mb-8">
         <div className="bg-white bg-opacity-20 rounded-xl p-4 text-center">
           <p className="text-sm mb-2">طلوع خورشید</p>
