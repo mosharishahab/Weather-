@@ -3,17 +3,20 @@ import { Cloud, CloudRain, CloudSnow, Sun, Wind, CloudLightning, CloudFog } from
 
 const App = () => {
   const [currentWeather, setCurrentWeather] = useState({
-    city: 'تهران',
-    temp: 22,
-    condition: 'آفتابی',
-    highTemp: 25,
-    lowTemp: 18,
-    humidity: 35,
-    sunrise: '06:00',
-    sunset: '19:45',
-    time: '14:30',
-    date: 'شنبه، ۷ اردیبهشت'
+    city: '',
+    temp: 0,
+    condition: '',
+    highTemp: 0,
+    lowTemp: 0,
+    humidity: 0,
+    sunrise: '',
+    sunset: '',
+    time: '',
+    date: ''
   });
+
+  const [hourlyForecast, setHourlyForecast] = useState([]);
+  const [dailyForecast, setDailyForecast] = useState([]);
 
   const getWeatherIcon = (condition, size = 24) => {
     switch (condition) {
@@ -47,15 +50,13 @@ const App = () => {
       navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
 
-        // گرفتن اطلاعات آب و هوا
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
           .then(data => {
             const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
             const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
 
-            setCurrentWeather(prev => ({
-              ...prev,
+            setCurrentWeather({
               city: data.name,
               temp: Math.round(data.main.temp),
               condition: data.weather[0].main,
@@ -66,7 +67,45 @@ const App = () => {
               sunset: sunset,
               time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
               date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
+            });
+          });
+
+        fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
+          .then(response => response.json())
+          .then(data => {
+            const hourly = data.list.slice(0, 8).map(item => ({
+              time: new Date(item.dt * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+              temp: Math.round(item.main.temp),
+              condition: item.weather[0].main
             }));
+            setHourlyForecast(hourly);
+
+            const dailyData = {};
+            data.list.forEach(item => {
+              const date = item.dt_txt.split(' ')[0];
+              if (!dailyData[date]) {
+                dailyData[date] = {
+                  temp_min: item.main.temp_min,
+                  temp_max: item.main.temp_max,
+                  condition: item.weather[0].main
+                };
+              } else {
+                dailyData[date].temp_min = Math.min(dailyData[date].temp_min, item.main.temp_min);
+                dailyData[date].temp_max = Math.max(dailyData[date].temp_max, item.main.temp_max);
+              }
+            });
+
+            const dailyArray = Object.keys(dailyData).slice(0, 5).map((date, index) => {
+              const dayName = new Date(date).toLocaleDateString('fa-IR', { weekday: 'long' });
+              return {
+                day: index === 0 ? 'امروز' : dayName,
+                highTemp: Math.round(dailyData[date].temp_max),
+                lowTemp: Math.round(dailyData[date].temp_min),
+                condition: dailyData[date].condition
+              };
+            });
+
+            setDailyForecast(dailyArray);
           });
 
       }, (err) => {
@@ -77,7 +116,6 @@ const App = () => {
 
   return (
     <div dir="rtl" className="flex flex-col h-full text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-hidden animated-background">
-      {/* Header */}
       <div className="text-center mb-8 mt-4">
         <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
         <p className="text-xl opacity-90">{currentWeather.date}</p>
@@ -93,7 +131,6 @@ const App = () => {
         </p>
       </div>
 
-      {/* Extra Info */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-white bg-opacity-20 rounded-xl p-3">
           <p className="text-sm mb-1 opacity-80">رطوبت</p>
@@ -111,6 +148,40 @@ const App = () => {
           <p className="text-sm mb-1 opacity-80">ساعت فعلی</p>
           <p className="text-lg">{currentWeather.time}</p>
         </div>
+      </div>
+
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+        <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
+        <div className="flex overflow-x-auto pb-2">
+          {hourlyForecast.map((hour, index) => (
+            <div key={index} className="flex flex-col items-center mx-3 min-w-16">
+              <p className="mb-1">{hour.time}</p>
+              <div className="my-2">
+                {getWeatherIcon(hour.condition)}
+              </div>
+              <p>{hour.temp}°</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+        <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
+        {dailyForecast.map((day, index) => (
+          <div key={index} className="flex items-center justify-between py-3 border-b border-white border-opacity-20">
+            <span className="w-24">{day.day}</span>
+            <div className="flex mx-2">
+              {getWeatherIcon(day.condition)}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm opacity-80 w-8 text-center">{day.lowTemp}°</span>
+              <div className="w-24 bg-white bg-opacity-30 h-1 rounded-full">
+                <div className="bg-white h-1 rounded-full" style={{ width: '60%' }}></div>
+              </div>
+              <span className="w-8 text-center">{day.highTemp}°</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
