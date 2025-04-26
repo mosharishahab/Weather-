@@ -161,8 +161,7 @@ const App = () => {
 
   return (
     <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
-      
-      {/* بقیه پروژه همونطور که قبلاً چیدیم */}
+    
       
       {/* کادر جمله خنده دار پایین */}
       <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
