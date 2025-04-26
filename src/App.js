@@ -1,164 +1,87 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, CloudRain, CloudSnow, Sun, Wind, CloudLightning, CloudFog } from 'lucide-react';
+import { Sun } from 'lucide-react';
 
 const App = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
-  const [hourlyForecast, setHourlyForecast] = useState([]);
-  const [dailyForecast, setDailyForecast] = useState([]);
-  const [funnyQuote, setFunnyQuote] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const funnyQuotes = {
-    Clear: [
-      "آفتاب کله پاچمون کرده!",
-      "کرم ضدآفتاب یادت نره، سیخ نشی!",
-      "آفتاب درخشانه، مواظب سوختن باش!",
-      "هوا خوبه، وقتشه عشق و حال کنی!"
-    ],
-    Clouds: [
-      "ابرها دارن شایعه درست میکنن!",
-      "هوا ابریه، دلت باز باشه!",
-      "ابرها ناراحتن، ولی ما نه!",
-      "یه کم دیگه شاید بارون شد!"
-    ],
-    "نیمه ابری": [
-      "خورشید قایم باشک بازی کرده!",
-      "یه کم آفتاب، یه کم ابر، یه دل نه صد دل!",
-      "نیمه ابری یعنی هوا دو دله!",
-      "ابرها و خورشید صلح کردن امروز!"
-    ]
-  };
+  const fetchWeather = async () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
 
-  const getWeatherIcon = (condition, size = 24, isMain = false) => {
-    const extraClass = isMain
-      ? condition === 'Clear' || condition === 'آفتابی'
-        ? 'animated-sun'
-        : 'animated-cloud'
-      : '';
-    switch (condition) {
-      case 'Clear':
-      case 'آفتابی':
-        return <Sun size={size} className={`text-yellow-400 ${extraClass}`} />;
-      case 'Clouds':
-      case 'ابری':
-      case 'نیمه ابری':
-        return <Cloud size={size} className={`text-gray-400 ${extraClass}`} />;
-      case 'Rain':
-      case 'بارانی':
-        return <CloudRain size={size} className="text-blue-500" />;
-      case 'Snow':
-      case 'برفی':
-        return <CloudSnow size={size} className="text-blue-200" />;
-      case 'Thunderstorm':
-      case 'طوفانی':
-        return <Wind size={size} className="text-blue-700" />;
-      case 'Mist':
-      case 'Fog':
-      case 'مه آلود':
-        return <CloudFog size={size} className="text-gray-300" />;
-      default:
-        return <Sun size={size} className={`text-yellow-400 ${extraClass}`} />;
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`);
+        const data = await res.json();
+
+        const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+        const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+
+        setCurrentWeather({
+          city: data.name,
+          temp: Math.round(data.main.temp),
+          condition: data.weather[0].description,
+          humidity: data.main.humidity,
+          sunrise,
+          sunset,
+          time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
+          date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
+        });
+      });
     }
   };
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async position => {
-        const { latitude, longitude } = position.coords;
+    fetchWeather();
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // لودینگ فقط ۱ ثانیه
 
-        const locationRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
-        const locationData = await locationRes.json();
-        const cityName = locationData.address.city || locationData.address.town || locationData.address.village || 'شهر نامشخص';
-
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
-          .then(response => response.json())
-          .then(data => {
-            const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-            const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-
-            setCurrentWeather({
-              city: cityName,
-              temp: Math.round(data.main.temp),
-              condition: data.weather[0].main,
-              highTemp: Math.round(data.main.temp_max),
-              lowTemp: Math.round(data.main.temp_min),
-              humidity: data.main.humidity,
-              sunrise,
-              sunset,
-              time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
-              date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
-            });
-
-            const condition = data.weather[0].main;
-            let quotes = funnyQuotes[condition] || funnyQuotes["Clear"];
-            setFunnyQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-
-            setTimeout(() => {
-              setLoading(false);
-            }, 1500); // اینجا لودینگ رو ۱.۵ ثانیه بیشتر نگه می‌داریم
-          });
-
-        fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
-          .then(response => response.json())
-          .then(data => {
-            const hourly = data.list.slice(0, 8).map(item => ({
-              time: new Date(item.dt * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
-              temp: Math.round(item.main.temp),
-              condition: item.weather[0].main
-            }));
-            setHourlyForecast(hourly);
-
-            const dailyData = {};
-            data.list.forEach(item => {
-              const date = item.dt_txt.split(' ')[0];
-              if (!dailyData[date]) {
-                dailyData[date] = {
-                  temp_min: item.main.temp_min,
-                  temp_max: item.main.temp_max,
-                  condition: item.weather[0].main
-                };
-              } else {
-                dailyData[date].temp_min = Math.min(dailyData[date].temp_min, item.main.temp_min);
-                dailyData[date].temp_max = Math.max(dailyData[date].temp_max, item.main.temp_max);
-              }
-            });
-
-            const dailyArray = Object.keys(dailyData).slice(0, 5).map((date, index) => {
-              const dayName = new Date(date).toLocaleDateString('fa-IR', { weekday: 'long' });
-              return {
-                day: index === 0 ? 'امروز' : dayName,
-                highTemp: Math.round(dailyData[date].temp_max),
-                lowTemp: Math.round(dailyData[date].temp_min),
-                condition: dailyData[date].condition
-              };
-            });
-
-            setDailyForecast(dailyArray);
-          });
-
-      }, (err) => {
-        console.error('Geolocation error:', err);
-        setLoading(false);
-      });
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading || !currentWeather) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
-        <div className="animate-spin-slow mb-4">
-          <Sun size={80} className="text-yellow-400" />
-        </div>
-        <p className="text-3xl font-bold">در حال چک کردن هوا...</p>
+        <Sun size={64} className="animate-spin-slow text-yellow-400 mb-4" />
+        <p className="text-2xl font-bold">در حال چک کردن هوا...</p>
       </div>
     );
   }
 
+  const currentHour = new Date().getHours();
+  const isNight = currentHour >= 20 || currentHour < 6;
+
   return (
-    <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-400 to-blue-600 p-4 rounded-xl overflow-auto font-iransans">
-      
-      {/* اینجا ادامه همون صفحه اصلیه که قبلا چیدیم */}
-      
+    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto ${isNight ? 'bg-gradient-to-b from-gray-900 to-blue-900' : 'bg-gradient-to-b from-blue-500 to-blue-700'}`}>
+      {/* بالای صفحه */}
+      <div className="text-center mb-8 mt-4">
+        <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
+        <p className="text-xl opacity-90">{currentWeather.date}</p>
+        <div className="flex items-center justify-center mt-4">
+          <span className="text-6xl font-thin">{currentWeather.temp}°</span>
+        </div>
+        <p className="text-xl mt-2">{currentWeather.condition}</p>
+        <p className="text-lg mt-1">رطوبت: {currentWeather.humidity}%</p>
+      </div>
+
+      {/* اطلاعات طلوع و غروب */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">طلوع خورشید</p>
+          <p className="text-lg">{currentWeather.sunrise}</p>
+        </div>
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">غروب خورشید</p>
+          <p className="text-lg">{currentWeather.sunset}</p>
+        </div>
+      </div>
+
+      {/* کپی‌رایت */}
+      <div className="text-center text-white text-xs opacity-50 mt-10">
+        <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
+          © 2025 Shahab - با عشق ساختمش
+        </a>
+      </div>
     </div>
   );
 };
