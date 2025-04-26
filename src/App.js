@@ -8,17 +8,21 @@ function App() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
-        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=6275bc00b989ce4c39aab6913db1733a`)
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
           .then(data => {
-            setWeather({
-              city: data.name,
-              temp: data.main.temp,
-              condition: data.weather[0].description,
-            });
+            if (data.cod === 200) {
+              setWeather({
+                city: data.name,
+                temp: data.main.temp,
+                condition: data.weather[0].description,
+              });
+            } else {
+              setError('مشکل در دریافت اطلاعات آب و هوا');
+            }
           })
           .catch(err => {
-            setError('مشکل در دریافت اطلاعات آب و هوا');
+            setError('مشکل در اتصال به سرور آب و هوا');
             console.error(err);
           });
       }, () => {
