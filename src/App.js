@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Cloud, CloudRain, CloudSnow, Wind, CloudLightning, CloudFog } from 'lucide-react';
+import { Cloud, CloudRain, CloudSnow, Sun, Wind, CloudLightning, CloudFog } from 'lucide-react';
 
 const App = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
   const [funnyQuote, setFunnyQuote] = useState('');
-  const [isDayTime, setIsDayTime] = useState(true);
   const [loading, setLoading] = useState(true);
 
   const funnyQuotes = {
@@ -63,10 +62,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    setIsDayTime(hour >= 6 && hour < 20);
-
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async position => {
         const { latitude, longitude } = position.coords;
@@ -88,8 +83,8 @@ const App = () => {
               highTemp: Math.round(data.main.temp_max),
               lowTemp: Math.round(data.main.temp_min),
               humidity: data.main.humidity,
-              sunrise,
-              sunset,
+              sunrise: sunrise,
+              sunset: sunset,
               time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
               date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
             });
@@ -97,8 +92,6 @@ const App = () => {
             const condition = data.weather[0].main;
             let quotes = funnyQuotes[condition] || funnyQuotes["Clear"];
             setFunnyQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-
-            setLoading(false);
           });
 
         fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
@@ -137,28 +130,114 @@ const App = () => {
             });
 
             setDailyForecast(dailyArray);
+            setLoading(false); // اطلاعات آماده شد، لودینگ تموم
           });
 
       }, (err) => {
         console.error('Geolocation error:', err);
+        setLoading(false);
       });
     }
   }, []);
 
-  if (loading) {
+  if (loading || !currentWeather) {
     return (
-      <div className="flex flex-col items-center justify-center bg-white p-4 text-black" style={{ minHeight: '100vh' }}>
-        <div className="animate-spin-slow mb-6">
-          <Sun size={100} className="text-yellow-400" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
+        <div className="animate-spin mb-4">
+          <Sun size={60} className="text-yellow-400" />
         </div>
-        <p className="text-3xl font-bold">در حال دریافت اطلاعات آب و هوا...</p>
+        <p className="text-2xl font-bold">در حال چک کردن هوای تو...</p>
       </div>
     );
   }
 
   return (
-    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'}`}>
-      {/* اینجا صفحه اصلی اپ که شامل دما، پیش‌بینی، جمله خنده دار و کپی‌رایت میشه */}
+    <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
+      
+      {/* بالای صفحه */}
+      <div className="text-center mb-8 mt-4">
+        <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
+        <p className="text-xl opacity-90">{currentWeather.date}</p>
+        <div className="flex items-center justify-center mt-4">
+          <span className="text-6xl font-thin">{currentWeather.temp}°</span>
+          <div className="mx-4">
+            {getWeatherIcon(currentWeather.condition, 48, true)}
+          </div>
+        </div>
+        <p className="text-xl mt-2">{currentWeather.condition}</p>
+        <p className="text-lg">
+          بیشترین: {currentWeather.highTemp}° | کمترین: {currentWeather.lowTemp}°
+        </p>
+      </div>
+
+      {/* اطلاعات رطوبت و طلوع */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">رطوبت</p>
+          <p className="text-lg">{currentWeather.humidity}%</p>
+        </div>
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">طلوع خورشید</p>
+          <p className="text-lg">{currentWeather.sunrise}</p>
+        </div>
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">غروب خورشید</p>
+          <p className="text-lg">{currentWeather.sunset}</p>
+        </div>
+        <div className="bg-white bg-opacity-20 rounded-xl p-3">
+          <p className="text-sm mb-1 opacity-80">ساعت فعلی</p>
+          <p className="text-lg">{currentWeather.time}</p>
+        </div>
+      </div>
+
+      {/* پیش‌بینی ساعتی */}
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+        <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
+        <div className="flex overflow-x-auto pb-2">
+          {hourlyForecast.map((hour, index) => (
+            <div key={index} className="flex flex-col items-center mx-2 min-w-16">
+              <p className="mb-1">{hour.time}</p>
+              <div className="my-2">
+                {getWeatherIcon(hour.condition)}
+              </div>
+              <p>{hour.temp}°</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* پیش‌بینی ۵ روزه */}
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
+        <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
+        {dailyForecast.map((day, index) => (
+          <div key={index} className="flex items-center justify-between py-3 border-b border-white border-opacity-20">
+            <span className="w-24">{day.day}</span>
+            <div className="flex mx-2">
+              {getWeatherIcon(day.condition)}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm opacity-80 w-8 text-center">{day.lowTemp}°</span>
+              <div className="w-24 bg-white bg-opacity-30 h-1 rounded-full">
+                <div className="bg-white h-1 rounded-full" style={{ width: '60%' }}></div>
+              </div>
+              <span className="w-8 text-center">{day.highTemp}°</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* جمله باحال */}
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
+        {funnyQuote}
+      </div>
+
+      {/* کپی رایت */}
+      <div className="text-center text-white text-xs opacity-50 mb-6">
+        <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
+          © 2025 Shahab - با عشق ساختمش
+        </a>
+      </div>
+
     </div>
   );
 };
