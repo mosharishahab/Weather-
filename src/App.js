@@ -226,7 +226,7 @@ const App = () => {
       </div>
 
       {/* کادر نوشته خنده دار */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-black text-lg font-semibold">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
         {funnyQuote}
       </div>
 
