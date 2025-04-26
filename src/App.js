@@ -72,11 +72,14 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        const { latitude, longitude } = position.coords;
-
+  fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=fa`)
+  .then(response => response.json())
+  .then(locationData => {
+    setCurrentWeather(prev => ({
+      ...prev,
+      city: locationData.city || locationData.locality || prev.city
+    }));
+  });
         // گرفتن آب و هوای فعلی
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
