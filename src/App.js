@@ -18,18 +18,19 @@ const App = () => {
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
 
-  const getWeatherIcon = (condition, size = 24) => {
+  const getWeatherIcon = (condition, size = 24, animated = false) => {
+    const extraClass = animated ? "animated-sun" : "";
     switch (condition) {
       case 'Clear':
       case 'آفتابی':
-        return <Sun size={size} className="text-yellow-400" />;
+        return <Sun size={size} className={`text-yellow-400 ${extraClass}`} />;
       case 'Clouds':
       case 'ابری':
       case 'نیمه ابری':
-        return <Cloud size={size} className="text-gray-400" />;
+        return <Cloud size={size} className={`text-gray-400 animated-cloud`} />;
       case 'Rain':
       case 'بارانی':
-        return <CloudRain size={size} className="text-blue-500" />;
+        return <CloudRain size={size} className={`text-blue-500 animated-cloud`} />;
       case 'Snow':
       case 'برفی':
         return <CloudSnow size={size} className="text-blue-200" />;
@@ -41,14 +42,20 @@ const App = () => {
       case 'مه آلود':
         return <CloudFog size={size} className="text-gray-300" />;
       default:
-        return <Sun size={size} className="text-yellow-400" />;
+        return <Sun size={size} className={`text-yellow-400 ${extraClass}`} />;
     }
   };
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition(async position => {
         const { latitude, longitude } = position.coords;
+
+        // گرفتن اسم شهر از OpenStreetMap
+        const locationRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
+        const locationData = await locationRes.json();
+
+        const cityName = locationData.address.city || locationData.address.town || locationData.address.village || 'شهر نامشخص';
 
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
@@ -57,7 +64,7 @@ const App = () => {
             const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
 
             setCurrentWeather({
-              city: data.name,
+              city: cityName,
               temp: Math.round(data.main.temp),
               condition: data.weather[0].main,
               highTemp: Math.round(data.main.temp_max),
@@ -115,14 +122,14 @@ const App = () => {
   }, []);
 
   return (
-    <div dir="rtl" className="flex flex-col h-full text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-hidden animated-background">
+    <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
       <div className="text-center mb-8 mt-4">
         <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
         <p className="text-xl opacity-90">{currentWeather.date}</p>
         <div className="flex items-center justify-center mt-4">
           <span className="text-6xl font-thin">{currentWeather.temp}°</span>
           <div className="mx-4">
-            {getWeatherIcon(currentWeather.condition, 48)}
+            {getWeatherIcon(currentWeather.condition, 48, true)}
           </div>
         </div>
         <p className="text-xl mt-2">{currentWeather.condition}</p>
