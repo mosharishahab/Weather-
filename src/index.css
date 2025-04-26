@@ -55,4 +55,29 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}@font-face {
+  font-family: 'IranSans';
+  src: url('/fonts/IRANSansWeb.woff2') format('woff2');
+}
+
+.font-iransans {
+  font-family: 'IranSans', sans-serif;
+}
+
+.animate-spin-slow {
+  animation: spin 6s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animated-sun {
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
 }
