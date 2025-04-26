@@ -240,5 +240,7 @@ const App = () => {
     </div>
   );
 };
-
+<div className="text-center text-white text-xs opacity-50 mb-6">
+  © 2025 Shahab - با عشق ساختمش
+</div>
 export default App;
