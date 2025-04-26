@@ -2,21 +2,35 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
   const [weather, setWeather] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('https://api.openweathermap.org/data/2.5/weather?q=Tehran&units=metric&appid=6275bc00b989ce4c39aab6913db1733a')
-      .then(response => response.json())
-      .then(data => {
-        setWeather({
-          city: data.name,
-          temp: data.main.temp,
-          condition: data.weather[0].description,
-        });
-      })
-      .catch(error => console.error('خطا در گرفتن اطلاعات آب و هوا:', error));
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=6275bc00b989ce4c39aab6913db1733a`)
+          .then(response => response.json())
+          .then(data => {
+            setWeather({
+              city: data.name,
+              temp: data.main.temp,
+              condition: data.weather[0].description,
+            });
+          })
+          .catch(err => {
+            setError('مشکل در دریافت اطلاعات آب و هوا');
+            console.error(err);
+          });
+      }, () => {
+        setError('اجازه دسترسی به لوکیشن داده نشد.');
+      });
+    } else {
+      setError('دستگاه شما از لوکیشن پشتیبانی نمی‌کند.');
+    }
   }, []);
 
-  if (!weather) return <div>در حال بارگذاری اطلاعات آب و هوا...</div>;
+  if (error) return <div>{error}</div>;
+  if (!weather) return <div>در حال گرفتن موقعیت مکانی و اطلاعات آب و هوا...</div>;
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
