@@ -7,7 +7,7 @@ const App = () => {
   const [dailyForecast, setDailyForecast] = useState([]);
   const [funnyQuote, setFunnyQuote] = useState('');
   const [isDayTime, setIsDayTime] = useState(true);
-  const [loading, setLoading] = useState(true); // برای لودینگ واقعی
+  const [loading, setLoading] = useState(true);
 
   const funnyQuotes = {
     Clear: [
@@ -65,7 +65,7 @@ const App = () => {
   useEffect(() => {
     const now = new Date();
     const hour = now.getHours();
-    setIsDayTime(hour >= 6 && hour < 20); // روشن از ۶ تا ۲۰
+    setIsDayTime(hour >= 6 && hour < 20);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async position => {
@@ -98,7 +98,7 @@ const App = () => {
             let quotes = funnyQuotes[condition] || funnyQuotes["Clear"];
             setFunnyQuote(quotes[Math.floor(Math.random() * quotes.length)]);
 
-            setLoading(false); // دیتا کامل شد، لودینگ خاموش
+            setLoading(false);
           });
 
         fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
@@ -147,23 +147,18 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white" style={{ minHeight: '100vh' }}>
-        <div className="animate-spin-slow mb-4">
-          <Sun size={80} className="text-yellow-400" />
+      <div className="flex flex-col items-center justify-center bg-white p-4 text-black" style={{ minHeight: '100vh' }}>
+        <div className="animate-spin-slow mb-6">
+          <Sun size={100} className="text-yellow-400" />
         </div>
-        <p className="text-2xl">دارم هوا رو برات چک می‌کنم...</p>
+        <p className="text-3xl font-bold">در حال دریافت اطلاعات آب و هوا...</p>
       </div>
     );
   }
 
   return (
-    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'} fade-in`}>
-      
-      {/* بقیه صفحه اصلی */}
-      {/* (شامل نام شهر، دما، رطوبت، طلوع غروب، پیش‌بینی ساعتی، ۵ روزه، جمله خنده‌دار و کپی‌رایت) */}
-      
-      {/* همین‌ها همونجوری که قبلاً چیدیم میاد */}
-      
+    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'}`}>
+      {/* اینجا صفحه اصلی اپ که شامل دما، پیش‌بینی، جمله خنده دار و کپی‌رایت میشه */}
     </div>
   );
 };
