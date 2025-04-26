@@ -1,59 +1,55 @@
-/* فونت ایران سنس */
-@font-face {
-  font-family: 'IranSans';
-  src: url('/fonts/IRANSansWeb.woff2') format('woff2');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* ریست اولیه */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  direction: rtl;
 }
 
-/* کلاس برای کل متن اپ */
-.font-iransans {
-  font-family: 'IranSans', sans-serif;
+/* برای اپ */
+#root {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f2f5;
+  padding: 16px;
 }
 
 /* انیمیشن چرخش خورشید لودینگ */
-.animate-spin-slow {
-  animation: spin 6s linear infinite;
-}
-
-@keyframes spin {
+@keyframes spinSlow {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* انیمیشن بزرگ و کوچیک شدن خورشید اصلی */
 .animated-sun {
-  animation: pulse 2.5s ease-in-out infinite;
+  animation: sunPulse 4s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
+@keyframes sunPulse {
+  0% { transform: scale(1); }
   50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
-/* اختیاری: یه حالت Fade-in ملایم موقع لود صفحه */
-.fade-in {
-  animation: fadeIn 1.5s ease-in-out;
+/* انیمیشن حرکت ابر */
+.animated-cloud {
+  animation: cloudMove 6s ease-in-out infinite;
 }
 
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes cloudMove {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
 }
 
-/* ظاهر کلی اپ */
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f0f2f5;
-  direction: rtl;
-  font-family: 'IranSans', sans-serif;
-}
-
-/* اسکرول بار نازک و خوشگل */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 3px;
+/* چرخش خورشید در لودینگ */
+.loading-sun {
+  animation: spinSlow 6s linear infinite;
 }
