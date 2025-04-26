@@ -237,9 +237,11 @@ const App = () => {
         {funnyQuote}
       </div>
 
-      {/* کپی رایت پایین صفحه */}
+      {/* کپی رایت لینک دار */}
       <div className="text-center text-white text-xs opacity-50 mb-6">
-        © 2025 Shahab - با عشق ساختمش
+        <a href="mailto:shahab.aix1@gmail.com" className="underline">
+          © 2025 Shahab - با عشق ساختمش
+        </a>
       </div>
 
     </div>
