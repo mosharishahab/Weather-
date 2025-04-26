@@ -72,27 +72,34 @@ const App = () => {
     }
   };
 
-  fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=fa`)
-  .then(response => response.json())
-  .then(locationData => {
-    setCurrentWeather(prev => ({
-      ...prev,
-      city: locationData.city || locationData.locality || prev.city
-    }));
-  });
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+
         // گرفتن آب و هوای فعلی
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
           .then(response => response.json())
           .then(data => {
-            setCurrentWeather({
-              city: data.name,
+            setCurrentWeather(prev => ({
+              ...prev,
               temp: Math.round(data.main.temp),
               condition: data.weather[0].main,
               highTemp: Math.round(data.main.temp_max),
               lowTemp: Math.round(data.main.temp_min),
               time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
               date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
-            });
+            }));
+          });
+
+        // گرفتن اسم شهر اصلی با reverse geocoding
+        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=fa`)
+          .then(response => response.json())
+          .then(locationData => {
+            setCurrentWeather(prev => ({
+              ...prev,
+              city: locationData.city || locationData.locality || prev.city
+            }));
           });
 
         // گرفتن پیش‌بینی ۵ روزه
