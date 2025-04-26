@@ -201,7 +201,7 @@ const App = () => {
         <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
         <div className="flex overflow-x-auto pb-2">
           {hourlyForecast.map((hour, index) => (
-            <div key={index} className="flex flex-col items-center mx-3 min-w-16">
+            <div key={index} className="flex flex-col items-center mx-2 min-w-14">
               <p className="mb-1">{hour.time}</p>
               <div className="my-2">
                 {getWeatherIcon(hour.condition)}
@@ -232,12 +232,12 @@ const App = () => {
         ))}
       </div>
 
-      {/* کادر نوشته خنده دار */}
+      {/* جمله خنده دار */}
       <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
         {funnyQuote}
       </div>
 
-      {/* کپی رایت لینک دار */}
+      {/* کپی‌رایت */}
       <div className="text-center text-white text-xs opacity-50 mb-6">
         <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
           © 2025 Shahab - با عشق ساختمش
