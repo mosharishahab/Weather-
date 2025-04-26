@@ -17,6 +17,28 @@ const App = () => {
 
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
+  const [funnyQuote, setFunnyQuote] = useState('');
+
+  const funnyQuotes = {
+    Clear: [
+      "آفتاب پدرسوخته داره کله‌پاچمون می‌کنه!",
+      "کرم ضدآفتاب یادت نره، سیخ نشی!",
+      "آفتاب درخشانه، مواظب پوستت باش!",
+      "هوا خوبه، ولی مواظب سوختن باش!"
+    ],
+    Clouds: [
+      "ابرها دارن شایعه پراکنی می‌کنن!",
+      "هوا ابریه، دل ابرها گرفته!",
+      "ابرها دپرس شدن، تو نشو!",
+      "یه کم دیگه میشه بارونی!"
+    ],
+    "نیمه ابری": [
+      "خورشید قایم‌باشک بازی میکنه!",
+      "یه ذره ابر، یه ذره آفتاب، همه چی قاطی!",
+      "نیمه ابری یعنی آسمون دو دله!",
+      "ابرها و خورشید رفیق شدن امروز!"
+    ]
+  };
 
   const getWeatherIcon = (condition, size = 24, isMain = false) => {
     const extraClass = isMain
@@ -78,6 +100,10 @@ const App = () => {
               time: new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }),
               date: new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' })
             });
+
+            const condition = data.weather[0].main;
+            let quotes = funnyQuotes[condition] || funnyQuotes["Clear"];
+            setFunnyQuote(quotes[Math.floor(Math.random() * quotes.length)]);
           });
 
         fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
@@ -126,6 +152,8 @@ const App = () => {
 
   return (
     <div dir="rtl" className="flex flex-col min-h-screen text-white bg-gradient-to-b from-blue-500 to-blue-700 p-4 rounded-xl overflow-auto animated-background">
+      
+      {/* بالای صفحه */}
       <div className="text-center mb-8 mt-4">
         <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
         <p className="text-xl opacity-90">{currentWeather.date}</p>
@@ -141,6 +169,7 @@ const App = () => {
         </p>
       </div>
 
+      {/* باکس اطلاعات رطوبت، طلوع، غروب */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-white bg-opacity-20 rounded-xl p-3">
           <p className="text-sm mb-1 opacity-80">رطوبت</p>
@@ -160,6 +189,7 @@ const App = () => {
         </div>
       </div>
 
+      {/* پیش‌بینی ساعتی */}
       <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
         <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
         <div className="flex overflow-x-auto pb-2">
@@ -175,6 +205,7 @@ const App = () => {
         </div>
       </div>
 
+      {/* پیش‌بینی ۵ روزه */}
       <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
         <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
         {dailyForecast.map((day, index) => (
@@ -193,6 +224,12 @@ const App = () => {
           </div>
         ))}
       </div>
+
+      {/* کادر نوشته خنده دار */}
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-black text-lg font-semibold">
+        {funnyQuote}
+      </div>
+
     </div>
   );
 };
