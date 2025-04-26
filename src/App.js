@@ -7,6 +7,7 @@ const App = () => {
   const [dailyForecast, setDailyForecast] = useState([]);
   const [funnyQuote, setFunnyQuote] = useState('');
   const [isDayTime, setIsDayTime] = useState(true);
+  const [loading, setLoading] = useState(true); // ✅ اضافه شده
 
   const funnyQuotes = {
     Clear: [
@@ -64,7 +65,7 @@ const App = () => {
   useEffect(() => {
     const now = new Date();
     const hour = now.getHours();
-    setIsDayTime(hour >= 6 && hour < 20); // 6 صبح تا 8 شب روشن
+    setIsDayTime(hour >= 6 && hour < 20);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async position => {
@@ -96,6 +97,8 @@ const App = () => {
             const condition = data.weather[0].main;
             let quotes = funnyQuotes[condition] || funnyQuotes["Clear"];
             setFunnyQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
+            setLoading(false); // ✅ وقتی همه چیز اومد، لودینگ خاموش میشه
           });
 
         fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
@@ -142,7 +145,7 @@ const App = () => {
     }
   }, []);
 
-  if (!currentWeather) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-500 to-blue-700 p-4 text-white">
         <div className="animate-spin-slow mb-4">
@@ -151,13 +154,11 @@ const App = () => {
         <p className="text-2xl">دارم هوا رو برات چک می‌کنم...</p>
       </div>
     );
-  }
-
-  return (
-    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'}`}>
+  }  return (
+    <div dir="rtl" className={`flex flex-col min-h-screen text-white p-4 rounded-xl overflow-auto transition-all duration-1000 ${isDayTime ? 'bg-gradient-to-b from-blue-400 to-blue-600' : 'bg-gradient-to-b from-gray-800 to-gray-900'} fade-in`}>
       
       {/* بالای صفحه */}
-      <div className="text-center mb-8 mt-4 animate-fade">
+      <div className="text-center mb-8 mt-4">
         <h1 className="text-4xl font-light mb-1">{currentWeather.city}</h1>
         <p className="text-xl opacity-90">{currentWeather.date}</p>
         <div className="flex items-center justify-center mt-4">
@@ -173,7 +174,7 @@ const App = () => {
       </div>
 
       {/* اطلاعات رطوبت، طلوع، غروب */}
-      <div className="grid grid-cols-2 gap-3 mb-4 animate-fade">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="bg-white bg-opacity-20 rounded-xl p-3">
           <p className="text-sm mb-1 opacity-80">رطوبت</p>
           <p className="text-lg">{currentWeather.humidity}%</p>
@@ -193,7 +194,7 @@ const App = () => {
       </div>
 
       {/* پیش‌بینی ساعتی */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4 animate-fade">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
         <h2 className="text-lg mb-4">پیش‌بینی ساعتی</h2>
         <div className="flex overflow-x-auto pb-2">
           {hourlyForecast.map((hour, index) => (
@@ -209,7 +210,7 @@ const App = () => {
       </div>
 
       {/* پیش‌بینی ۵ روزه */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4 animate-fade">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-4">
         <h2 className="text-lg mb-2">پیش‌بینی ۵ روزه</h2>
         {dailyForecast.map((day, index) => (
           <div key={index} className="flex items-center justify-between py-3 border-b border-white border-opacity-20">
@@ -229,12 +230,12 @@ const App = () => {
       </div>
 
       {/* جمله خنده دار */}
-      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold animate-fade">
+      <div className="bg-white bg-opacity-20 rounded-xl p-4 mb-10 text-center text-white text-lg font-semibold">
         {funnyQuote}
       </div>
 
       {/* کپی‌رایت */}
-      <div className="text-center text-white text-xs opacity-50 mb-6 animate-fade">
+      <div className="text-center text-white text-xs opacity-50 mb-6">
         <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
           © 2025 Shahab - با عشق ساختمش
         </a>
