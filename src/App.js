@@ -18,8 +18,12 @@ const App = () => {
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
 
-  const getWeatherIcon = (condition, size = 24, animated = false) => {
-    const extraClass = animated ? "animated-sun" : "";
+  const getWeatherIcon = (condition, size = 24, isMain = false) => {
+    const extraClass = isMain
+      ? condition === 'Clear' || condition === 'آفتابی'
+        ? 'animated-sun'
+        : 'animated-cloud'
+      : '';
     switch (condition) {
       case 'Clear':
       case 'آفتابی':
@@ -27,10 +31,10 @@ const App = () => {
       case 'Clouds':
       case 'ابری':
       case 'نیمه ابری':
-        return <Cloud size={size} className={`text-gray-400 animated-cloud`} />;
+        return <Cloud size={size} className={`text-gray-400 ${extraClass}`} />;
       case 'Rain':
       case 'بارانی':
-        return <CloudRain size={size} className={`text-blue-500 animated-cloud`} />;
+        return <CloudRain size={size} className="text-blue-500" />;
       case 'Snow':
       case 'برفی':
         return <CloudSnow size={size} className="text-blue-200" />;
@@ -51,7 +55,6 @@ const App = () => {
       navigator.geolocation.getCurrentPosition(async position => {
         const { latitude, longitude } = position.coords;
 
-        // گرفتن اسم شهر از OpenStreetMap
         const locationRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`);
         const locationData = await locationRes.json();
 
