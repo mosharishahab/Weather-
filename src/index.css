@@ -32,3 +32,11 @@ body {
 .sun-pulse {
   animation: sunPulse 3s ease-in-out infinite;
 }
+body {
+  font-family: 'IranSans', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+  text-align: center;
+  direction: rtl;
+}
