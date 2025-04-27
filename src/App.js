@@ -14,28 +14,29 @@ const App = () => {
     Rain: ["بارون داره میاد، چتر یادت نره!", "تر نشی‌ها!"],
   };
 
-  const getWeatherIcon = (condition) => {
-    switch (condition) {
-      case 'Clear':
-      case 'آفتابی':
-        return <Sun size={55} className="text-yellow-400 animated-sun" />;
-      case 'Clouds':
-      case 'ابری':
-        return <Cloud size={40} className="text-gray-400" />;
-      case 'Rain':
-      case 'بارانی':
-        return <CloudRain size={40} className="text-blue-400" />;
-      case 'Snow':
-        return <CloudSnow size={40} className="text-blue-200" />;
-      case 'Thunderstorm':
-        return <Wind size={40} className="text-blue-700" />;
-      case 'Mist':
-      case 'Fog':
-        return <CloudFog size={40} className="text-gray-300" />;
-      default:
-        return <Sun size={40} className="text-yellow-400" />;
-    }
-  };
+const getWeatherIcon = (condition, isMain = false) => {
+  const extraClass = isMain ? "animated-sun" : "";
+  switch (condition) {
+    case 'Clear':
+    case 'آفتابی':
+      return <Sun size={55} className={`text-yellow-400 ${extraClass}`} />;
+    case 'Clouds':
+    case 'ابری':
+      return <Cloud size={40} className="text-gray-400" />;
+    case 'Rain':
+    case 'بارانی':
+      return <CloudRain size={40} className="text-blue-400" />;
+    case 'Snow':
+      return <CloudSnow size={40} className="text-blue-200" />;
+    case 'Thunderstorm':
+      return <Wind size={40} className="text-blue-700" />;
+    case 'Mist':
+    case 'Fog':
+      return <CloudFog size={40} className="text-gray-300" />;
+    default:
+      return <Sun size={40} className="text-yellow-400" />;
+  }
+};
 
   useEffect(() => {
     if (navigator.geolocation) {
