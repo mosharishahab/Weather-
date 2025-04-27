@@ -2,22 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Sun, Cloud, CloudRain, CloudSnow, Wind, CloudLightning, CloudFog } from 'lucide-react';
 
 const App = () => {
-  const [currentWeather, setCurrentWeather] = useState({
-    city: '',
-    temp: 0,
-    condition: '',
-    highTemp: 0,
-    lowTemp: 0,
-    humidity: 0,
-    sunrise: '',
-    sunset: '',
-    time: '',
-    date: ''
-  });
-
+  const [currentWeather, setCurrentWeather] = useState(null);
   const [hourlyForecast, setHourlyForecast] = useState([]);
   const [dailyForecast, setDailyForecast] = useState([]);
   const [funnyQuote, setFunnyQuote] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const funnyQuotes = {
     Clear: ["آفتاب کله پاچمون کرده!", "کرم ضدآفتاب یادت نره!", "هوا خوبه، عشق کن!"],
@@ -28,10 +17,13 @@ const App = () => {
   const getWeatherIcon = (condition) => {
     switch (condition) {
       case 'Clear':
+      case 'آفتابی':
         return <Sun size={40} className="text-yellow-400 animated-sun" />;
       case 'Clouds':
+      case 'ابری':
         return <Cloud size={40} className="text-gray-400" />;
       case 'Rain':
+      case 'بارانی':
         return <CloudRain size={40} className="text-blue-400" />;
       case 'Snow':
         return <CloudSnow size={40} className="text-blue-200" />;
@@ -111,15 +103,20 @@ const App = () => {
             });
 
             setDailyForecast(dailyArray);
+
+            setTimeout(() => {
+              setLoading(false);
+            }, 1000); // لودینگ حداقل ۱ ثانیه بمونه
           });
       });
     }
   }, []);
 
-  if (!currentWeather.city) {
+  if (loading || !currentWeather) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-black">
-        <p className="text-2xl mb-4 animate-pulse">در حال دریافت اطلاعات...</p>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-blue-400 text-white">
+        <Sun className="animated-sun mb-4" size={80} />
+        <p className="text-2xl font-bold">دارم هوا رو برات چک می‌کنم...</p>
       </div>
     );
   }
@@ -157,7 +154,7 @@ const App = () => {
           <div key={idx} className="flex justify-between items-center p-3 bg-white rounded-lg shadow">
             <span>{day.day}</span>
             {getWeatherIcon(day.condition)}
-            <span>{day.lowTemp}° / {day.highTemp}°</span>
+            <span>{day.lowTemp}° کمینه / {day.highTemp}° بیشینه</span>
           </div>
         ))}
       </div>
@@ -165,6 +162,11 @@ const App = () => {
       {/* جمله خنده‌دار */}
       <div className="text-center text-sm mt-8 text-gray-600">
         {funnyQuote}
+      </div>
+
+      {/* کپی رایت پایین صفحه */}
+      <div className="text-center text-xs opacity-50 mt-10 mb-2">
+        © 2025 Shahab - با عشق ساختمش
       </div>
     </div>
   );
