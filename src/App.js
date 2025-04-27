@@ -113,13 +113,13 @@ const App = () => {
   }, []);
 
   if (loading || !currentWeather) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-blue-400 text-white">
-        <Sun className="animated-sun mb-4" size={80} />
-        <p className="text-2xl font-bold">دارم هوا رو برات چک می‌کنم...</p>
-      </div>
-    );
-  }
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-black">
+      <Sun className="animated-sun mb-4" size={80} />
+      <p className="text-2xl font-bold">هوای دلم بی تو ابریه</p>
+    </div>
+  );
+}
 
   return (
     <div dir="rtl" className="flex flex-col min-h-screen text-black p-4 overflow-auto">
