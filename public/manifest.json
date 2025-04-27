@@ -1,13 +1,11 @@
 {
-  "name": "آفتابه",
-  "short_name": "آفتابه",
-  "start_url": ".",
-  "scope": "/",
+  "name": "Aftabe",
+  "short_name": "Aftabe",
+  "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#2196f3",
-  "description": "برنامه آب و هوا با عشق ساخته شده توسط Shahab",
+  "description": "Weather app made with love by Shahab",
   "icons": [
     {
       "src": "/icons/icon-192.png",
