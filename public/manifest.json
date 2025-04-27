@@ -1,11 +1,13 @@
 {
   "name": "آب و هوا",
   "short_name": "آب‌هوا",
-  "start_url": "/",
+  "start_url": ".",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#2196f3",
-  "description": "برنامه پیش‌بینی آب و هوا با عشق ساخته شده توسط Shahab",
+  "description": "برنامه پیش‌بینی آب و هوا ساخته شده با عشق توسط Shahab",
   "icons": [
     {
       "src": "/icons/icon-192.png",
