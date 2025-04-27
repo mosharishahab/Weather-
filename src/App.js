@@ -18,7 +18,7 @@ const App = () => {
     switch (condition) {
       case 'Clear':
       case 'آفتابی':
-        return <Sun size={50} className="text-yellow-400 animated-sun" />;
+        return <Sun size={55} className="text-yellow-400 animated-sun" />;
       case 'Clouds':
       case 'ابری':
         return <Cloud size={40} className="text-gray-400" />;
