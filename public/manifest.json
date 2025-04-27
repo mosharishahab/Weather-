@@ -1,11 +1,12 @@
 {
-  "name": "Aftabe",
-  "short_name": "Aftabe",
+  "name": "آب و هوا",
+  "short_name": "آب‌هوا",
   "start_url": "/",
+  "id": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2196f3",
-  "description": "Weather app made with love by Shahab",
+  "description": "برنامه هواشناسی ساخته شده با عشق توسط Shahab",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -19,5 +20,8 @@
     }
   ],
   "dir": "rtl",
-  "lang": "fa-IR"
+  "lang": "fa-IR",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
