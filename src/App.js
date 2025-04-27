@@ -154,7 +154,7 @@ const App = () => {
           <div key={idx} className="flex justify-between items-center p-3 bg-white rounded-lg shadow">
             <span>{day.day}</span>
             {getWeatherIcon(day.condition)}
-            <span>{day.lowTemp}° کمینه / {day.highTemp}° بیشینه</span>
+              <span>{day.lowTemp}° کمترین/ {day.highTemp}° بیشترین</span>
           </div>
         ))}
       </div>
