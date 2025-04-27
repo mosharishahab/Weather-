@@ -1,57 +1,188 @@
 @font-face {
-  font-family: 'IranSans';
-  src: url('./fonts/iransansdn.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'IranSans';
+    src: url('./fonts/iransansdn.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
+/* استایل‌های پایه */
 body {
-  font-family: 'IranSans', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f0f0f0;
-  text-align: center;
-  direction: rtl;
+    font-family: 'IranSans', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+    text-align: right;
+    direction: rtl;
+    line-height: 1.6;
+    color: #333;
 }
 
-/* خورشید بچرخه */
+/* استایل‌های متن */
+h1, h2, h3, h4, h5, h6 {
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+p {
+    margin: 10px 0;
+}
+
+/* انیمیشن چرخش خورشید */
 @keyframes rotateSun {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .animated-sun {
-  animation: rotateSun 8s linear infinite;
+    animation: rotateSun 8s linear infinite;
+    display: inline-block;
 }
 
-/* بزرگ و کوچیک شدن خورشید اصلی */
+/* انیمیشن ضربان خورشید */
 @keyframes sunPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 .sun-pulse {
-  animation: sunPulse 3s ease-in-out infinite;
+    animation: sunPulse 3s ease-in-out infinite;
+    display: inline-block;
 }
 
 /* استایل پیش‌بینی ساعتی */
-.forecast-hour {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 10px;
-  min-width: 60px;
-}
-
-.forecast-hour img, .forecast-hour svg {
-  width: 32px;
-  height: 32px;
-}
-
 .hourly-forecast {
-  display: flex;
-  overflow-x: auto;
-  justify-content: center;
-  padding: 10px 0;
+    display: flex;
+    overflow-x: auto;
+    padding: 15px 0;
+    gap: 15px;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 20px 0;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.hourly-forecast::-webkit-scrollbar {
+    height: 6px;
+}
+
+.hourly-forecast::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.hourly-forecast::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.forecast-hour {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    padding: 12px;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.forecast-hour:hover {
+    transform: translateY(-2px);
+}
+
+.forecast-hour img,
+.forecast-hour svg {
+    width: 32px;
+    height: 32px;
+    margin: 5px 0;
+}
+
+/* کانتینر اصلی */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* کارت‌های اطلاعات */
+.weather-card {
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* استایل برای موبایل */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .forecast-hour {
+        min-width: 70px;
+        padding: 8px;
+    }
+
+    .forecast-hour img,
+    .forecast-hour svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+}
+
+/* استایل برای تبلت */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 15px;
+    }
+
+    .forecast-hour {
+        min-width: 75px;
+    }
+}
+
+/* استایل‌های کمکی */
+.text-center {
+    text-align: center;
+}
+
+.mt-2 {
+    margin-top: 20px;
+}
+
+.mb-2 {
+    margin-bottom: 20px;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* انیمیشن‌های اضافی برای لودینگ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
 }
