@@ -24,7 +24,7 @@ body {
 }
 
 .animated-sun {
-    animation: rotateSun 8s linear infinite;
+    animation: rotateSun 12s linear infinite;
 }
 
 /* انیمیشن ضربان خورشید */
