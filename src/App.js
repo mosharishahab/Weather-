@@ -133,7 +133,7 @@ const App = () => {
         </div>
         <p className="text-xl mt-2">{currentWeather.condition}</p>
         <p className="text-sm mt-1">
-          بیشینه: {currentWeather.highTemp}° | کمینه: {currentWeather.lowTemp}°
+          بیشترین: {currentWeather.highTemp}° | کمترین: {currentWeather.lowTemp}°
         </p>
       </div>
 
@@ -164,10 +164,11 @@ const App = () => {
         {funnyQuote}
       </div>
 
-      {/* کپی رایت پایین صفحه */}
-      <div className="text-center text-xs opacity-50 mt-10 mb-2">
-        © 2025 Shahab - با عشق ساختمش
-      </div>
+      {/* کپی رایت پایین صفحه */}<div className="text-center text-xs opacity-50 mt-10 mb-2">
+  <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
+    © 2025 Shahab - با عشق ساختمش
+  </a>
+</div>
     </div>
   );
 };
