@@ -46,11 +46,18 @@ const App = () => {
         const locationData = await locationRes.json();
         const cityName = locationData.address.city || locationData.address.town || locationData.address.village || 'شهر نامشخص';
 
+        let persianCityName = cityName;
+        if (cityName === 'Tehran') persianCityName = 'تهران';
+        if (cityName === 'Karaj') persianCityName = 'کرج';
+        if (cityName === 'Mashhad') persianCityName = 'مشهد';
+        if (cityName === 'Shiraz') persianCityName = 'شیراز';
+        // شهرهای دیگه هم میتونی اضافه کنی
+
         fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&lang=fa&appid=aff89acecaa64716df36812fa895dc07`)
           .then(res => res.json())
           .then(data => {
             setCurrentWeather({
-              city: cityName,
+              city: persianCityName,
               temp: Math.round(data.main.temp),
               condition: data.weather[0].main,
               highTemp: Math.round(data.main.temp_max),
@@ -113,13 +120,13 @@ const App = () => {
   }, []);
 
   if (loading || !currentWeather) {
-  return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-white text-black">
-      <Sun className="animated-sun mb-4" size={80} />
-      <p className="text-2xl font-bold">هوای دلم بی تو ابریه</p>
-    </div>
-  );
-}
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen bg-white text-black">
+        <Sun className="animated-sun mb-4" size={80} />
+        <p className="text-2xl font-bold">هوای دلم بی تو ابریه</p>
+      </div>
+    );
+  }
 
   return (
     <div dir="rtl" className="flex flex-col min-h-screen text-black p-4 overflow-auto">
@@ -154,7 +161,7 @@ const App = () => {
           <div key={idx} className="flex justify-between items-center p-3 bg-white rounded-lg shadow">
             <span>{day.day}</span>
             {getWeatherIcon(day.condition)}
-              <span>{day.lowTemp}° ↓/ {day.highTemp}° ↑</span>
+            <span>{day.lowTemp}° ↓ / {day.highTemp}° ↑</span>
           </div>
         ))}
       </div>
@@ -164,11 +171,12 @@ const App = () => {
         {funnyQuote}
       </div>
 
-      {/* کپی رایت پایین صفحه */}<div className="text-center text-xs opacity-50 mt-10 mb-2">
-  <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
-    © 2025 Shahab - با عشق ساختمش
-  </a>
-</div>
+      {/* کپی رایت پایین صفحه */}
+      <div className="text-center text-xs opacity-50 mt-10 mb-2">
+        <a href="mailto:shahab.aix1@gmail.com" className="no-underline">
+          © 2025 Shahab - با عشق ساختمش
+        </a>
+      </div>
     </div>
   );
 };
