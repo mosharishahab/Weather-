@@ -12,23 +12,23 @@ body {
   background: #f0f0f0;
 }
 
-/* چرخش خورشید لودینگ */
-@keyframes spin {
+/* انیمیشن چرخش خورشید */
+@keyframes rotateSun {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
 .animated-sun {
-  animation: spin 6s linear infinite;
+  animation: rotateSun 8s linear infinite;
 }
 
-/* بزرگ و کوچیک شدن خورشید اصلی */
+/* انیمیشن کوچک و بزرگ شدن خورشید اصلی */
 @keyframes sunPulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 
-.sun-pulse {
+.animated-main-sun {
   animation: sunPulse 3s ease-in-out infinite;
 }
